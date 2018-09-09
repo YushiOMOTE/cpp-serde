@@ -1,0 +1,7 @@
+---
+mode: External
+clients:
+  madacoa: {ip: "192.168.115.19", port: 1032}
+  madacob: {ip: "192.168.115.20", port: 1033}
+  madacoc: {ip: "192.168.115.21", port: 1034}
+filters: ["gomi", "kami"]
