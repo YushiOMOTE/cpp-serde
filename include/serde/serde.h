@@ -330,7 +330,7 @@ private:
 
 /// Parse a file
 template <typename Lang, typename T>
-Result<T> parse_file(const std::string &filename) try {
+Result<T> from_file(const std::string &filename) try {
   const auto str = internal::read_file(filename);
   if (!str) {
     return Result<T>::error("serde: on parsing file: file not found: " +
@@ -345,7 +345,7 @@ Result<T> parse_file(const std::string &filename) try {
 
 /// Parse a string
 template <typename Lang, typename T>
-Result<T> parse_string(const std::string &str) try {
+Result<T> from_string(const std::string &str) try {
   const auto node = Core::from_string<Lang>(str);
   return Result<T>::value(Core::unpack<Lang, T>(node));
 } catch (std::exception &e) {

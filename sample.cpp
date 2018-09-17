@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  auto cfg = serde::parse_file<serde::YAML, Config>(argv[1]);
+  auto cfg = serde::from_file<serde::YAML, Config>(argv[1]);
   if (!cfg) {
     std::cerr << "yaml: unpack error: " << cfg.error() << std::endl;
     return -1;
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
     }
     printf("\n");
 
-    auto cfg = serde::parse_string<serde::MsgPack, Config>(mp.value());
+    auto cfg = serde::from_string<serde::MsgPack, Config>(mp.value());
     if (!cfg) {
       std::cerr << "msgpack: unpack error: " << cfg.value() << std::endl;
       return -1;
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     }
     std::cout << "json: packed: " << std::endl << json.value() << std::endl;
 
-    auto cfg = serde::parse_string<serde::JSON, Config>(json.value());
+    auto cfg = serde::from_string<serde::JSON, Config>(json.value());
     if (!cfg) {
       std::cerr << "json: unpack error: " << cfg.error() << std::endl;
       return -1;
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
     }
     std::cout << "toml: packed: " << std::endl << toml.value() << std::endl;
 
-    auto cfg = serde::parse_string<serde::TOML, Config>(toml.value());
+    auto cfg = serde::from_string<serde::TOML, Config>(toml.value());
     if (!cfg) {
       std::cerr << "toml: unpack error: " << cfg.error() << std::endl;
       return -1;
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
     }
     printf("\n");
 
-    auto cfg = serde::parse_string<serde::CBOR, Config>(dat.value());
+    auto cfg = serde::from_string<serde::CBOR, Config>(dat.value());
     if (!cfg) {
       std::cerr << "cbor: unpack error: " << cfg.error() << std::endl;
       return -1;
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
     }
     printf("\n");
 
-    auto cfg = serde::parse_string<serde::UBJSON, Config>(dat.value());
+    auto cfg = serde::from_string<serde::UBJSON, Config>(dat.value());
     if (!cfg) {
       std::cerr << "ubjson: unpack error: " << cfg.error() << std::endl;
       return -1;
