@@ -69,6 +69,32 @@ template <typename T> struct TomlSerde<std::vector<T>> {
   }
 };
 
+template <typename T, size_t N> struct TomlSerde<std::array<T, N>> {
+  static std::array<T, N> decode(Base base) {
+    std::array<T, N> v;
+
+    auto i = 0ul;
+    auto array = base->as_array();
+    for (auto b : *array) {
+      v[i] = dec<T>(b);
+      ++i;
+    }
+
+    return v;
+  }
+
+  static Base encode(const std::array<T, N> &v) {
+    auto array = cpptoml::make_array();
+
+    for (auto &e : v) {
+      auto b = enc<T>(e);
+      array->push_back(std::static_pointer_cast<cpptoml::value<T>>(b));
+    }
+
+    return std::static_pointer_cast<cpptoml::base>(array);
+  }
+};
+
 template <typename K, typename V> struct TomlSerde<std::unordered_map<K, V>> {
   static std::unordered_map<K, V> decode(Base base) {
     std::unordered_map<K, V> v;
@@ -83,6 +109,31 @@ template <typename K, typename V> struct TomlSerde<std::unordered_map<K, V>> {
   }
 
   static Base encode(const std::unordered_map<K, V> &m) {
+    auto table = cpptoml::make_table();
+
+    for (auto &[k, v] : m) {
+      auto b = enc(v);
+      table->insert(k, b);
+    }
+
+    return std::static_pointer_cast<cpptoml::base>(table);
+  }
+};
+
+template <typename K, typename V> struct TomlSerde<std::map<K, V>> {
+  static std::map<K, V> decode(Base base) {
+    std::map<K, V> v;
+
+    auto table = base->as_table();
+    for (auto &[k, b] : *table) {
+      auto d = dec<V>(b);
+      v.emplace(k, d);
+    }
+
+    return v;
+  }
+
+  static Base encode(const std::map<K, V> &m) {
     auto table = cpptoml::make_table();
 
     for (auto &[k, v] : m) {
