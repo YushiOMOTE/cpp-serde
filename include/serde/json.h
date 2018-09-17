@@ -33,6 +33,53 @@ template <typename T, typename> struct JsonSerde {
   }
 };
 
+template <typename T, typename U> struct JsonSerde<std::optional<T>, U> {
+  static void from_json(const json &j, std::optional<T> &t) {
+    if (j.is_null()) {
+      t = std::nullopt;
+    } else {
+      t = Core::unpack<JSON, T>(Node<JSON>{j});
+    }
+  }
+
+  static void to_json(json &j, const std::optional<T> &t) {
+    if (t) {
+      j = Core::pack<JSON>(t.value()).j;
+    } else {
+      j = nullptr;
+    }
+  }
+};
+
+/// Helper method for std::variant converter
+template <typename T, typename U> void try_set(const json &j, U &t, bool &set) {
+  if (set) {
+    return;
+  }
+  try {
+    t = Core::unpack<JSON, T>(Node<JSON>{j});
+    set = true;
+  } catch (serde::Exception &) {
+  } catch (json::exception &) {
+  }
+}
+
+template <typename... T, typename U> struct JsonSerde<std::variant<T...>, U> {
+  static void from_json(const json &j, std::variant<T...> &t) {
+    bool set = false;
+
+    (try_set<T>(j, t, set), ...);
+
+    if (!set) {
+      throw serde::Exception("Variant didn't match");
+    }
+  }
+
+  static void to_json(json &j, const std::variant<T...> &t) {
+    std::visit([&](auto &v) { j = Core::pack<JSON>(v).j; }, t);
+  }
+};
+
 template <> struct Node<JSON> { json j; };
 
 template <> struct LangHandler<JSON> {
