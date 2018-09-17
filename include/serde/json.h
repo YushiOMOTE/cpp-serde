@@ -104,7 +104,7 @@ template <> struct LangHandler<JSON> {
     }
 
     auto unpack_member = [&](const auto &mem) {
-      if (!node.j[mem.name].is_null()) {
+      if (node.j.find(mem.name) != node.j.end()) {
         return node.j[mem.name]
             .template get<std::decay_t<decltype(mem.value.value())>>();
       } else {
