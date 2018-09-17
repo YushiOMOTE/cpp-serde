@@ -198,7 +198,7 @@ template <> struct LangHandler<YAML> {
     }
 
     auto unpack_member = [&](const auto &mem) {
-      if (node.node[mem.name] && !node.node[mem.name].IsNull()) {
+      if (node.node[mem.name]) {
         return node.node[mem.name]
             .template as<std::decay_t<decltype(mem.value.value())>>();
       } else {
