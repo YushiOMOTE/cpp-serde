@@ -2,6 +2,7 @@
 #define SERDE_H_
 
 #include <deque>
+#include <fstream>
 #include <list>
 #include <map>
 #include <optional>
